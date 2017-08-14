@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.shsxt.crm.dao.SaleChanceDao">
+  	<sql id="sale_chance_sql">
+  	id,customer_name,customer_id,chance_source,cgjl,overview,link_man,
+  	link_phone,create_man,assign_man,create_date,state,assign_time,
+  	update_date,description
+  	</sql>
+  	<select id="querySaleChanceForPage" parameterType="saleChanceParams" resultType="saleChance">
+  		select <include refid="sale_chance_sql"/> 
+  		from t_sale_chance
+  		<where>
+  			is_valid=1
+  			<if test="customerName !=null and customerName!=''">
+  				and customer_name like concat('%',#{customerName},'%')
+  			</if>
+  			<if test="overview !=null and overview!=''">
+  				and overview like concat('%',#{overview},'%')
+  			</if>
+  			<if test="createMan !=null and createMan!=''">
+  				and create_man like concat('%',#{createMan},'%')
+  			</if>
+  			<if test="state !=null">
+  				and state = #{state}
+  			</if>
+  		</where>
+  	</select>
+  	
+  	<insert id="insertSaleChance" parameterType="saleChance">
+  		insert into t_sale_chance 
+  		(chance_source,customer_id,customer_name,cgjl,overview,link_man,
+  		 link_phone,description,create_man,assign_man,assign_time,state,
+  		 is_valid,create_date,update_date)
+  		values 
+  		(#{chanceSource},#{customerId},#{customerName},#{cgjl},#{overview},
+	  	 #{linkMan},#{linkPhone},#{description},#{createMan},#{assignMan},
+	  	 #{assignTime},#{state},#{isValid},#{createDate},#{updateDate})
+  	</insert>
+  	
+  	
+  	<select id="querySaleChanceById" parameterType="int" resultType="saleChance">
+  		select <include refid="sale_chance_sql"/>
+  		from t_sale_chance 
+  		where id=#{id}
+  	</select>
+  	
+  	<update id="updateSaleChance" parameterType="saleChance">
+  		update t_sale_chance 
+  		set chance_source=#{chanceSource},customer_id=#{customerId},
+	  		customer_name=#{customerName},cgjl=#{cgjl},overview=#{overview},
+	  		link_man=#{linkMan},link_phone=#{linkPhone},description=#{description},
+	  		assign_man=#{assignMan},assign_time=#{assignTime},state=#{state},
+	  		is_valid=#{isValid},update_date=#{updateDate}
+  		where id=#{id}
+  	</update>
+  	
+  	<!-- <update id="deleteSaleChance" parameterType="String">
+  		update t_sale_chance 
+  		set is_valid=0
+  		where id in (#{ids})
+  	</update> -->
+  </mapper>
